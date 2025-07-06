@@ -1,0 +1,5 @@
+name: aqi_app
+version: 0.0.1
+dependencies:
+  flutter:
+    sdk: flutter
