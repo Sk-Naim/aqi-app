@@ -1,4 +1,4 @@
-name: Android CI
+name: Flutter Android CI
 
 on:
   push:
@@ -6,31 +6,32 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest      # ← macOS ki jagah Ubuntu
+    name: Build APK
+    runs-on: ubuntu-latest
 
     steps:
-      # 1) Checkout code
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # 2) Install Flutter + Android SDK
-      - uses: subosito/flutter-action@v2
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.22.x"
-          channel: stable
+          flutter-version: '3.22.x'
+          channel: 'stable'
 
-      # 3) Accept Android licences (required on fresh runner)
-      - run: yes | flutter doctor --android-licenses
+      - name: Enable Android Licenses
+        run: yes | flutter doctor --android-licenses
 
-      # 4) Get packages
-      - run: flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
         working-directory: mobile
 
-      # 5) Build unsigned release APK
-      - run: flutter build apk --release
+      - name: Build release APK
+        run: flutter build apk --release
         working-directory: mobile
 
-      # 6) Upload APK artefact
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
           path: mobile/build/app/outputs/flutter-apk/app-release.apk
