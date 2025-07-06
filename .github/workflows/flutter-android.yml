@@ -6,17 +6,30 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: ubuntu-latest      # ← macOS ki jagah Ubuntu
+
     steps:
+      # 1) Checkout code
       - uses: actions/checkout@v4
+
+      # 2) Install Flutter + Android SDK
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.22.x"
           channel: stable
+
+      # 3) Accept Android licences (required on fresh runner)
+      - run: yes | flutter doctor --android-licenses
+
+      # 4) Get packages
       - run: flutter pub get
         working-directory: mobile
+
+      # 5) Build unsigned release APK
       - run: flutter build apk --release
         working-directory: mobile
+
+      # 6) Upload APK artefact
       - uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
